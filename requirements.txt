@@ -1,0 +1,3 @@
+# torch, numpy e Pillow ja vem com o ComfyUI; listados so por clareza.
+numpy
+Pillow
