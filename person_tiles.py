@@ -15,7 +15,7 @@ Licenca AGPL-3.0-or-later — veja LICENSE.
 """
 import numpy as np
 import torch
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image as PILImage, ImageFilter
 
 
 def _img_np(t):
@@ -90,6 +90,75 @@ def _blobs(m, thr=0.5):
         out.append({"m": m, "lab": lab, "idx": int(k),
                     "box": (int(x), int(y), int(x + w), int(y + h)), "area": float(a)})
     return out
+
+
+def _pontos_px(p, W, H):
+    """SAM3_POINTS_PROMPT -> lista de (x, y) em pixel.
+
+    O SAM3 entrega {"points": [[x, y], ...], "labels": [...]} com x e y
+    NORMALIZADOS de 0 a 1. Aceito tambem ja em pixel (quem passa de 1.5 nao
+    pode ser normalizado) e uma lista crua de pares, pra nao travar se vier
+    de outro node.
+    """
+    if not p:
+        return []
+    pares = p.get("points", []) if isinstance(p, dict) else p
+    out = []
+    for q in pares:
+        try:
+            x, y = (q["x"], q["y"]) if isinstance(q, dict) else (q[0], q[1])
+        except (TypeError, KeyError, IndexError):
+            continue
+        x, y = float(x), float(y)
+        if x <= 1.5 and y <= 1.5:          # normalizado
+            x, y = x * W, y * H
+        xi, yi = int(round(x)), int(round(y))
+        if 0 <= xi < W and 0 <= yi < H:
+            out.append((xi, yi))
+    return out
+
+
+def _tem_ponto(d, pts):
+    """O ponto caiu DENTRO desta pessoa? Testa no rotulo, nao na caixa — duas
+    pessoas lado a lado tem caixas que se cruzam, mas rotulos distintos."""
+    if not pts:
+        return False
+    lab, idx = d.get("lab"), d.get("idx")
+    x0, y0, x1, y1 = d["box"]
+    for x, y in pts:
+        if lab is not None and idx is not None:
+            if lab[y, x] == idx:
+                return True
+        elif x0 <= x < x1 and y0 <= y < y1:
+            return True
+    return False
+
+
+def _filtra_pontos(vivos, sim, nao, onde=""):
+    """Deixa passar so quem tem ponto em cima; tira quem tem ponto negativo.
+
+    Serve para as DUAS formas de `vivos` que o node monta: a do lote (uma
+    pessoa por imagem) e a das trilhas (uma pessoa ao longo dos frames). Nas
+    duas, `v["mask"]` e um dicionario frame -> blob, entao basta olhar todos
+    os frames dessa pessoa.
+    """
+    if not sim and not nao:
+        return vivos
+    def bate(v, pts):
+        return any(_tem_ponto(d, pts) for d in v["mask"].values())
+    antes = len(vivos)
+    if sim:
+        vivos = [v for v in vivos if bate(v, sim)]
+    if nao:
+        vivos = [v for v in vivos if not bate(v, nao)]
+    print("[Soussa_Neo_PersonTiles] pontos%s: %d marcado(s), %d excluido(s) "
+          "-> %d de %d pessoa(s)" % (onde, len(sim), len(nao), len(vivos), antes))
+    if not vivos:
+        raise ValueError(
+            "[Soussa_Neo_PersonTiles] nenhum clique caiu em cima de uma pessoa. "
+            "Clique dentro do corpo (nao no fundo), ou desligue a entrada "
+            "`pontos` para recortar todas.")
+    return vivos
 
 
 def _ajusta_caixa(box, ar, pad, W, H):
@@ -366,7 +435,22 @@ class SoussaNeoPersonTilesVideo:
                                                    "aparecem em mais frames (as mais confiáveis)."}),
             },
             "optional": {
+                "pontos": ("SAM3_POINTS_PROMPT",
+                           {"tooltip": "OPCIONAL. Ligue o SAM3PointCollector aqui e clique "
+                                       "nas pessoas que voce quer.\n\n"
+                                       "Desligado: recorta TODAS (como sempre fez).\n"
+                                       "Ligado: recorta so quem tem um clique em cima.\n\n"
+                                       "O clique vale pelo PIXEL: pode cair em qualquer parte "
+                                       "da pessoa."}),
+                "pontos_fora": ("SAM3_POINTS_PROMPT",
+                                {"tooltip": "OPCIONAL. Quem receber um clique aqui sai fora, "
+                                            "mesmo que tenha sido escolhido acima. Use o "
+                                            "clique NEGATIVO do SAM3PointCollector."}),
                 "margem": ("FLOAT", {"default": 0.12, "min": 0.0, "max": 0.45, "step": 0.01}),
+                "usar_pontos": ("BOOLEAN", {"default": True,
+                                "label_on": "respeita os pontos",
+                                "label_off": "ignora os pontos (pega todas)",
+                                "tooltip": 'Desligado, as entradas `pontos` e `pontos_fora` sao ignoradas mesmo ligadas, e o node recorta TODAS as pessoas.\n\nServe pra alternar entre automatico e escolhido sem desfazer a fiacao.'}),
                 "tipo": (["imagens separadas", "video (rastreia entre frames)"],
                          {"default": "imagens separadas",
                           "tooltip": "O QUE entrou. Não dá pra deduzir: um lote de 3 imagens e um "
@@ -388,7 +472,11 @@ class SoussaNeoPersonTilesVideo:
 
     def run(self, images, masks, largura, altura, padding, modo_caixa, suavizacao,
             min_area, min_presenca, max_pessoas, margem=0.12,
-            tipo="imagens separadas"):
+            tipo="imagens separadas", pontos=None, pontos_fora=None,
+            usar_pontos=True):
+        # a chave vem antes de tudo: desligada, os pontos nem sao lidos
+        if not usar_pontos:
+            pontos = pontos_fora = None
         largura = min(2048, max(16, int(largura) // 16 * 16))
         altura = min(2048, max(16, int(altura) // 16 * 16))
         imgs = _img_np(images)
@@ -449,6 +537,9 @@ class SoussaNeoPersonTilesVideo:
                 for d in _blobs(ms[i]):
                     if d["area"] >= limite:
                         vivos.append({"bbs": {i: d["box"]}, "mask": {i: d}, "frame": i})
+            vivos = _filtra_pontos(vivos, _pontos_px(pontos, W, H),
+                                   _pontos_px(pontos_fora, W, H), " (lote)")
+
             porim = {}
             for v in vivos:
                 porim[v["frame"]] = porim.get(v["frame"], 0) + 1
@@ -512,6 +603,8 @@ class SoussaNeoPersonTilesVideo:
             trilhas = _trilhas(ms, F, limite, dist_max, sumir_max=max(8, F // 5))
 
         vivos = [t for t in trilhas if len(t["bbs"]) >= (min_presenca / 100.0) * F]
+        vivos = _filtra_pontos(vivos, _pontos_px(pontos, W, H),
+                               _pontos_px(pontos_fora, W, H))
         vivos.sort(key=lambda t: -len(t["bbs"]))
         if max_pessoas > 0:
             vivos = vivos[:max_pessoas]
@@ -722,11 +815,70 @@ class SoussaNeoPersonTilesVideoMerge:
                 torch.from_numpy(np.ascontiguousarray(acc)))
 
 
+class SoulPersonTiles:
+    """Recorta cada pessoa. Cinco ajustes, nada mais.
+
+    E a casca enxuta de SoussaNeoPersonTilesVideo: os parametros que so valem
+    para VIDEO (modo_caixa, suavizacao, min_presenca) ficam no padrao e somem
+    da tela. Quem for tratar video usa SoulPersonTilesAvancado, que expoe tudo.
+    """
+
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "images": ("IMAGE", {"tooltip": "A foto."}),
+                "masks": ("MASK", {"tooltip": "As pessoas que o SAM3 achou."}),
+                "tamanho": ("INT", {"default": 496, "min": 64, "max": 2048, "step": 16,
+                                    "tooltip": "Lado do recorte, em pixel. E o tamanho "
+                                               "que o modelo de enhance vai receber: "
+                                               "maior e melhor e mais lento."}),
+                "padding": ("FLOAT", {"default": 0.30, "min": 0.0, "max": 1.0, "step": 0.05,
+                                      "tooltip": "Folga em volta da pessoa. 0.30 = 30%, "
+                                                 "o bastante para nao cortar cabelo e pe."}),
+                "min_area": ("FLOAT", {"default": 0.02, "min": 0.0, "max": 50.0, "step": 0.01,
+                                       "tooltip": "Ignora mancha menor que esta % do quadro. "
+                                                  "Mata ruido de mascara e figurante de 10 "
+                                                  "pixels, que gastaria uma passada inteira."}),
+                "max_pessoas": ("INT", {"default": 0, "min": 0, "max": 64,
+                                        "tooltip": "0 = todas. Qualquer outro numero fica "
+                                                   "com as N maiores."}),
+            },
+            "optional": {
+                "pontos": ("SAM3_POINTS_PROMPT",
+                           {"tooltip": "OPCIONAL. Ligue o SAM3PointCollector e clique nas "
+                                       "pessoas que voce quer. Vazio = todas."}),
+                "pontos_fora": ("SAM3_POINTS_PROMPT",
+                                {"tooltip": "OPCIONAL. Quem receber clique aqui sai fora."}),
+                "usar_pontos": ("BOOLEAN", {"default": True,
+                                            "label_on": "respeita os pontos",
+                                            "label_off": "ignora (pega todas)"}),
+            },
+        }
+
+    RETURN_TYPES = ("IMAGE", "MASK", "SOUSSA_PERSON_TRACKS", "IMAGE", "INT")
+    RETURN_NAMES = ("crops", "crop_masks", "tracks", "preview", "quantidade")
+    OUTPUT_IS_LIST = (True, True, False, False, False)
+    FUNCTION = "run"
+    CATEGORY = "Soul/Pessoa"
+
+    def run(self, images, masks, tamanho, padding, min_area, max_pessoas,
+            pontos=None, pontos_fora=None, usar_pontos=True):
+        return SoussaNeoPersonTilesVideo().run(
+            images=images, masks=masks, largura=tamanho, altura=tamanho,
+            padding=padding, modo_caixa="travada por trechos", suavizacao=9,
+            min_area=min_area, min_presenca=15, max_pessoas=max_pessoas,
+            margem=0.12, tipo="imagens separadas",
+            pontos=pontos, pontos_fora=pontos_fora, usar_pontos=usar_pontos)
+
+
 NODE_CLASS_MAPPINGS = {
-    "SoulPersonTiles":      SoussaNeoPersonTilesVideo,
-    "SoulPersonTilesMerge": SoussaNeoPersonTilesVideoMerge,
+    "SoulPersonTiles":          SoulPersonTiles,
+    "SoulPersonTilesAvancado":  SoussaNeoPersonTilesVideo,
+    "SoulPersonTilesMerge":     SoussaNeoPersonTilesVideoMerge,
 }
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "SoulPersonTiles":      "Soul Person Tiles (recorta cada pessoa)",
-    "SoulPersonTilesMerge": "Soul Person Tiles Merge (cola de volta)",
+    "SoulPersonTiles":          "Soul Person Tiles (recorta cada pessoa)",
+    "SoulPersonTilesAvancado":  "Soul Person Tiles - avancado (video)",
+    "SoulPersonTilesMerge":     "Soul Person Tiles Merge (cola de volta)",
 }
