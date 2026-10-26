@@ -672,11 +672,11 @@
         "Node name for S&R": "LoadImage"
       },
       "widgets_values": [
-        "exemplo.png",
+        "example.png",
         "image"
       ],
       "widgets_values_named": {
-        "image": "exemplo.png",
+        "image": "example.png",
         "upload": "image"
       }
     },
@@ -2720,8 +2720,8 @@
           "canvas"
         ],
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3008:tamanho",
-          "tamanho"
+          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3008:size",
+          "size"
         ],
         [
           "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3007:denoise",
