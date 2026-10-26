@@ -80,6 +80,12 @@ The click is tested against the **pixel label**, not the box: two people side
 by side have overlapping boxes but distinct labels, so a click never catches
 the wrong one.
 
+**The picker shows the photo before you run.** On its own, SAM3PointCollector
+only paints its canvas once the graph has executed, so you would have to run
+blind before you could see what to click. This pack ships a small frontend
+extension (`web/point_preview.js`) that fills that same canvas from the image
+Load Image already points at, as soon as you pick it. Load, click, run — once.
+
 ---
 
 ## Install
