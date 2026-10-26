@@ -1,116 +1,116 @@
 # Soul Person Enhance
 
-**Melhore cada pessoa de uma foto separadamente — ou só as que você escolher.**
+**Enhance each person in a photo on her own — or only the ones you pick.**
 
-Um retrato em grupo tem um problema simples: quando você amplia a imagem
-inteira, cada rosto recebe uma fatia minúscula da atenção do modelo. Quem está
-no fundo continua borrado, quem está na frente ganha pele de plástico.
+A group portrait has a simple problem: upscale the whole image and every face
+gets a tiny slice of the model's attention. Whoever is in the back stays
+blurry, whoever is in front gets plastic skin.
 
-Este pacote inverte a ordem. Cada pessoa é **recortada**, enquadrada e
-melhorada **sozinha**, no tamanho cheio que o modelo sabe tratar. Depois volta
-para a imagem original, no pixel exato de onde saiu, com a borda derretida na
-cena.
+This pack flips the order. Each person is **cropped**, framed and enhanced
+**alone**, at the full size the model knows how to handle. Then she goes back
+into the original image, at the exact pixel she came from, with the edge melted
+into the scene.
 
-E se você não quer todo mundo — **clique nas pessoas que quer.**
+And if you don't want everyone — **click the people you want.**
 
 ```
-foto ─► SAM3 acha todas ─► você clica (opcional) ─► recorta ─► melhora ─► cola de volta
+photo ─► SAM3 finds everyone ─► you click (optional) ─► crop ─► enhance ─► paste back
 ```
 
 ---
 
-## Os nodes
+## The nodes
 
-### `SoulPersonTiles` — cada pessoa vira um recorte
+### `SoulPersonTiles` — each person becomes a crop
 
-| entrada | |
+| input | |
 |---|---|
-| `images` | a foto |
-| `masks` | as pessoas que o SAM3 achou |
-| `pontos` *(opcional)* | os cliques: **só essas** viram recorte |
-| `pontos_fora` *(opcional)* | os cliques de exclusão: **essas saem** |
+| `images` | the photo |
+| `masks` | the people SAM3 found |
+| `points` *(optional)* | the clicks: **only these** become crops |
+| `points_exclude` *(optional)* | the exclusion clicks: **these are dropped** |
 
-| ajuste | padrão | |
+| setting | default | |
 |---|---|---|
-| `tamanho` | 496 | lado do recorte, em pixel. É o que o modelo de enhance recebe |
-| `padding` | 0.30 | folga em volta da pessoa, pra não cortar cabelo e pé |
-| `min_area` | 0.02 | ignora mancha menor que esta % do quadro |
-| `max_pessoas` | 0 | 0 = todas. Outro número fica com as N maiores |
-| `usar_pontos` | ligado | desligado, ignora os cliques mesmo ligados |
+| `size` | 496 | side of the crop, in pixels. This is what the enhance model receives |
+| `padding` | 0.30 | room around the person, so hair and feet are not clipped |
+| `min_area` | 0.02 | ignores any blob smaller than this % of the frame |
+| `max_people` | 0 | 0 = everyone. Any other number keeps the N largest |
+| `use_points` | on | off, the clicks are ignored even while connected |
 
-Saídas: `crops` (a lista), `crop_masks`, `tracks` (as coordenadas, que o Merge
-precisa), `preview` (as caixas desenhadas) e `quantidade`.
+Outputs: `crops` (the list), `crop_masks`, `tracks` (the coordinates the Merge
+needs), `preview` (the boxes drawn over the photo) and `count`.
 
-### `SoulPersonTilesMerge` — devolve para o lugar
+### `SoulPersonTilesMerge` — puts them back
 
-Recebe a foto original, os recortes **já melhorados** e os `tracks`.
+Takes the original photo, the **already enhanced** crops, and the `tracks`.
 
-| ajuste | padrão | |
+| setting | default | |
 |---|---|---|
-| `crescer` | 8 | dilata a máscara antes de colar, em pixels |
-| `feather` | 20 | suaviza a borda. Some com a emenda |
-| `forca` | 1 | 1 cola inteiro; abaixo disso mistura com o original |
+| `grow` | 8 | dilates the mask before pasting, in pixels |
+| `feather` | 20 | softens the edge. This is what makes the seam disappear |
+| `strength` | 1 | 1 pastes it whole; below that it blends with the original |
 
-### `SoulPersonTilesAvancado`
+### `SoulPersonTilesAdvanced`
 
-O mesmo recorte, com os parâmetros de **vídeo** expostos (`modo_caixa`,
-`suavizacao`, `min_presenca`, largura e altura separadas). Use só se for tratar
-sequência de quadros; para foto, o `SoulPersonTiles` já faz tudo.
+The same cropping, with the **video** parameters exposed (`box_mode`,
+`smoothing`, `min_presence`, separate width and height). Use it only to treat a
+frame sequence; for a photo, `SoulPersonTiles` already does everything.
 
 ---
 
-## A escolha por clique
+## Picking by click
 
-O `SoulPersonTiles` aceita pontos no formato do
-[comfyui-sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3), então o seletor
-visual já existe — não é preciso instalar mais nada:
+`SoulPersonTiles` takes points in the
+[comfyui-sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3) format, so the
+visual picker already exists — nothing else to install:
 
 ```
 LoadImage ─┬─► SAM3Grounding ("person") ──► masks ──┐
            │                                         ├─► SoulPersonTiles
-           └─► SAM3PointCollector (você clica) ──────┘
+           └─► SAM3PointCollector (you click) ───────┘
 ```
 
-- **Clique esquerdo** → `positive_points` → entrada `pontos` → essa pessoa entra
-- **Shift + clique** → `negative_points` → entrada `pontos_fora` → essa sai
+- **Left click** → `positive_points` → `points` input → this person is in
+- **Shift + click** → `negative_points` → `points_exclude` input → this one is out
 
-Sem nenhum clique, ele recorta **todas** — o comportamento automático de sempre.
+With no clicks at all it crops **everyone** — the automatic behavior it always had.
 
-O teste do clique é feito no **rótulo do pixel**, não na caixa: duas pessoas
-lado a lado têm caixas que se cruzam, mas rótulos distintos, então o clique
-nunca pega a errada.
+The click is tested against the **pixel label**, not the box: two people side
+by side have overlapping boxes but distinct labels, so a click never catches
+the wrong one.
 
 ---
 
-## Instalação
+## Install
 
 ```bash
 cd ComfyUI/custom_nodes
-git clone <url-deste-repo> SoulPersonEnhance
+git clone <url-of-this-repo> SoulPersonEnhance
 ```
 
-Reinicie o ComfyUI. Sem dependência além do que ele já traz (`torch`, `numpy`,
+Restart ComfyUI. No dependency beyond what it already ships (`torch`, `numpy`,
 `Pillow`).
 
 ---
 
-## Para rodar o workflow de exemplo
+## Running the example workflow
 
-`workflows/Enhance_Pessoas.json` é o pipeline completo. Ele usa outros pacotes,
-todos públicos:
+`workflows/Enhance_Pessoas.json` is the complete pipeline. It uses other packs,
+all public:
 
-| pacote | para quê |
+| pack | what for |
 |---|---|
-| [comfyui-sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3) | achar as pessoas e coletar os cliques |
-| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | listas de imagem e limpeza de VRAM |
-| [ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | Set/Get de variáveis |
-| [ComfyUI-nunchaku](https://github.com/nunchaku-tech/ComfyUI-nunchaku) | rodar o Flux quantizado |
-| [ComfyUI-GGUF](https://github.com/city96/ComfyUI-GGUF) | carregar o encoder em GGUF |
-| [ComfyUI-Impact-Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack) | lista ↔ lote de imagens |
+| [comfyui-sam3](https://github.com/PozzettiAndrea/ComfyUI-SAM3) | finding the people and collecting the clicks |
+| [ComfyUI-Easy-Use](https://github.com/yolain/ComfyUI-Easy-Use) | image lists and VRAM cleanup |
+| [ComfyUI-KJNodes](https://github.com/kijai/ComfyUI-KJNodes) | Set/Get variables |
+| [ComfyUI-nunchaku](https://github.com/nunchaku-tech/ComfyUI-nunchaku) | running quantized Flux |
+| [ComfyUI-GGUF](https://github.com/city96/ComfyUI-GGUF) | loading the encoder in GGUF |
+| [ComfyUI-Impact-Pack](https://github.com/ltdrdata/ComfyUI-Impact-Pack) | list ↔ image batch |
 
-### Modelos
+### Models
 
-| arquivo | pasta |
+| file | folder |
 |---|---|
 | `svdq-fp4_r32-fluxmania-legacy.safetensors` | `models/diffusion_models` |
 | `t5-v1_1-xxl-encoder-Q8_0.gguf` | `models/text_encoders` |
@@ -118,29 +118,29 @@ todos públicos:
 | `ae.safetensors` | `models/vae` |
 | `4x-UltraSharp.pth` | `models/upscale_models` |
 
-O SAM3 baixa sozinho na primeira execução.
+SAM3 downloads itself on the first run.
 
-> **O enhance é trocável.** Os dois nodes principais não sabem nem se importam
-> com qual modelo melhora o recorte — ele vive num subgraph à parte. Troque por
-> Qwen, SDXL, o que preferir: o recorte e a recolagem continuam iguais.
+> **The enhance is swappable.** The two main nodes neither know nor care which
+> model improves the crop — it lives in its own subgraph. Swap in Qwen, SDXL,
+> whatever you prefer: the cropping and the merging stay the same.
 
-### Memória
+### Memory
 
-Testado numa placa de 16 GB. O recorte e a recolagem custam quase nada; quem
-pesa é o modelo que você escolher para melhorar, e ele roda **uma pessoa por
-vez** — então o custo é por pessoa, não pela imagem toda.
+Tested on a 16 GB card. Cropping and merging cost almost nothing; what weighs
+is the model you choose to enhance with, and it runs **one person at a time**
+— so the cost is per person, not for the whole image.
 
 ---
 
-## Licença
+## License
 
-AGPL-3.0-or-later. Veja [LICENSE](LICENSE).
+AGPL-3.0-or-later. See [LICENSE](LICENSE).
 
-Em resumo: use, estude e modifique à vontade. Se distribuir uma versão
-modificada — **inclusive rodando como serviço na internet** — você precisa
-publicar o código dela sob a mesma licença.
+In short: use, study and modify freely. If you distribute a modified version —
+**including running it as a service over a network** — you have to publish its
+source under the same license.
 
-Os modelos citados acima têm licenças próprias, cada um com as suas regras.
-Verifique antes de usar comercialmente.
+The models listed above have licenses of their own, each with its own rules.
+Check them before using commercially.
 
-Autor: Felipe Soussa.
+Author: Felipe Soussa.

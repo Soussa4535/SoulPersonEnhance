@@ -33,7 +33,7 @@
         }
       ],
       "outputs": [],
-      "title": "antes  x  depois",
+      "title": "before  x  after",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -141,23 +141,23 @@
           "link": 2264
         },
         {
-          "name": "pontos",
+          "name": "points",
           "shape": 7,
           "type": "SAM3_POINTS_PROMPT",
           "link": 2265
         },
         {
-          "name": "pontos_fora",
+          "name": "points_exclude",
           "shape": 7,
           "type": "SAM3_POINTS_PROMPT",
           "link": null
         },
         {
-          "name": "usar_pontos",
+          "name": "use_points",
           "shape": 7,
           "type": "BOOLEAN",
           "widget": {
-            "name": "usar_pontos"
+            "name": "use_points"
           },
           "link": 2266
         }
@@ -179,7 +179,7 @@
         },
         {
           "name": "tracks",
-          "type": "SOUSSA_PERSON_TRACKS",
+          "type": "SOUL_PERSON_TRACKS",
           "links": [
             2269
           ]
@@ -192,12 +192,12 @@
           ]
         },
         {
-          "name": "quantidade",
+          "name": "count",
           "type": "INT",
           "links": []
         }
       ],
-      "title": "recorta cada pessoa",
+      "title": "crop each person",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -214,11 +214,11 @@
         true
       ],
       "widgets_values_named": {
-        "tamanho": 768,
+        "size": 768,
         "padding": 0.3,
         "min_area": 0.02,
-        "max_pessoas": 0,
-        "usar_pontos": true
+        "max_people": 0,
+        "use_points": true
       }
     },
     {
@@ -248,7 +248,7 @@
         },
         {
           "name": "tracks",
-          "type": "SOUSSA_PERSON_TRACKS",
+          "type": "SOUL_PERSON_TRACKS",
           "link": 2269
         }
       ],
@@ -262,12 +262,12 @@
           ]
         },
         {
-          "name": "mascara_colada",
+          "name": "pasted_mask",
           "type": "MASK",
           "links": []
         }
       ],
-      "title": "cola de volta",
+      "title": "paste back",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -282,9 +282,9 @@
         1
       ],
       "widgets_values_named": {
-        "crescer": 8,
+        "grow": 8,
         "feather": 20,
-        "forca": 1
+        "strength": 1
       }
     },
     {
@@ -453,7 +453,7 @@
           "links": []
         }
       ],
-      "title": "clique em quem voce quer",
+      "title": "click who you want",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -505,7 +505,7 @@
           "links": []
         }
       ],
-      "title": "salvar",
+      "title": "save",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -517,10 +517,10 @@
         "Node name for S&R": "SaveImage"
       },
       "widgets_values": [
-        "person_enhance/saida"
+        "person_enhance/output"
       ],
       "widgets_values_named": {
-        "filename_prefix": "person_enhance/saida"
+        "filename_prefix": "person_enhance/output"
       }
     },
     {
@@ -539,7 +539,7 @@
       "mode": 0,
       "inputs": [
         {
-          "label": "Escolher Pontos?",
+          "label": "Pick people?",
           "name": "value",
           "type": "BOOLEAN",
           "widget": {
@@ -557,7 +557,7 @@
           ]
         }
       ],
-      "title": "Escolher?",
+      "title": "Pick?",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -604,7 +604,7 @@
           "links": []
         }
       ],
-      "title": "quem foi escolhido",
+      "title": "who got picked",
       "properties": {
         "ue_properties": {
           "widget_ue_connectable": {},
@@ -632,7 +632,7 @@
       "mode": 0,
       "inputs": [
         {
-          "label": "Foto",
+          "label": "Photo",
           "name": "image",
           "type": "COMBO",
           "widget": {
@@ -705,10 +705,10 @@
         }
       },
       "widgets_values": [
-        "# Soul Person Enhance\n\n**Melhore cada pessoa de uma foto separadamente — ou so as que voce escolher.**\n\nQuando voce amplia um retrato em grupo inteiro, cada rosto recebe uma fatia\nminuscula da atencao do modelo: quem esta no fundo continua borrado, quem esta\nna frente ganha pele de plastico.\n\nAqui cada pessoa e **recortada**, melhorada **sozinha** no tamanho cheio, e\ndevolvida ao pixel exato de onde saiu, com a borda derretida na cena.\n\n## Como usar\n\n1. **Foto** — carregue a imagem.\n2. **Escolher Pontos?** — ligado, so as pessoas marcadas sao tratadas.\n   Desligado, ele trata **todas** as que o SAM3 encontrar.\n3. **canvas** — clique esquerdo marca quem voce quer.\n   Shift ou botao direito marca quem deve ficar de fora.\n4. **tamanho** — lado do recorte que vai para o modelo. 768 e um bom padrao.\n5. **Run**.\n\nO painel `quem foi escolhido` mostra as caixas desenhadas sobre a foto: e a\nconferencia de que o clique pegou a pessoa certa.\n\n## Os ajustes que importam\n\n| ajuste | o que faz |\n|---|---|\n| `tamanho` | lado do recorte. Maior = mais pixel real entregue ao modelo |\n| `padding` | folga em volta da pessoa, pra nao cortar cabelo e pe |\n| `min_area` | ignora mancha pequena demais pra ser gente |\n| `max_pessoas` | 0 = todas; outro numero fica com as N maiores |\n\n## Trocar o modelo de melhoria\n\nO enhance vive num subgraph separado (`Ups_OP_01`). Os nodes de recorte e\nrecolagem nao sabem nem se importam com o que ha dentro dele — troque por\nQwen, Z-Image, SDXL, o que preferir.\n"
+        "# Soul Person Enhance\n\n**Enhance each person in a photo on her own — or only the ones you pick.**\n\nUpscale a group portrait as a whole and every face gets a tiny slice of the\nmodel's attention: whoever is in the back stays blurry, whoever is in front\ngets plastic skin.\n\nHere each person is **cropped**, enhanced **alone** at full size, and put back\nat the exact pixel she came from, with the edge melted into the scene.\n\n## How to use\n\n1. **Photo** — load the image.\n2. **Pick people?** — on, only the marked people are treated.\n   Off, it treats **everyone** SAM3 can find.\n3. **canvas** — left click marks who you want.\n   Shift or right click marks who should be left out.\n4. **size** — side of the crop handed to the model. 768 is a good default.\n5. **Run**.\n\nThe `who got picked` panel shows the boxes drawn over the photo: that is how\nyou check the click caught the right person.\n\n## The settings that matter\n\n| setting | what it does |\n|---|---|\n| `size` | side of the crop. Bigger = more real pixels handed to the model |\n| `padding` | room around the person, so hair and feet are not clipped |\n| `min_area` | ignores a blob too small to be a person |\n| `max_people` | 0 = everyone; any other number keeps the N largest |\n\n## Swapping the enhance model\n\nThe enhance lives in its own subgraph (`Ups_OP_01`). The crop and merge nodes\nneither know nor care what is inside it — swap in Qwen, Z-Image, SDXL,\nwhatever you prefer.\n"
       ],
       "widgets_values_named": {
-        "text": "# Soul Person Enhance\n\n**Melhore cada pessoa de uma foto separadamente — ou so as que voce escolher.**\n\nQuando voce amplia um retrato em grupo inteiro, cada rosto recebe uma fatia\nminuscula da atencao do modelo: quem esta no fundo continua borrado, quem esta\nna frente ganha pele de plastico.\n\nAqui cada pessoa e **recortada**, melhorada **sozinha** no tamanho cheio, e\ndevolvida ao pixel exato de onde saiu, com a borda derretida na cena.\n\n## Como usar\n\n1. **Foto** — carregue a imagem.\n2. **Escolher Pontos?** — ligado, so as pessoas marcadas sao tratadas.\n   Desligado, ele trata **todas** as que o SAM3 encontrar.\n3. **canvas** — clique esquerdo marca quem voce quer.\n   Shift ou botao direito marca quem deve ficar de fora.\n4. **tamanho** — lado do recorte que vai para o modelo. 768 e um bom padrao.\n5. **Run**.\n\nO painel `quem foi escolhido` mostra as caixas desenhadas sobre a foto: e a\nconferencia de que o clique pegou a pessoa certa.\n\n## Os ajustes que importam\n\n| ajuste | o que faz |\n|---|---|\n| `tamanho` | lado do recorte. Maior = mais pixel real entregue ao modelo |\n| `padding` | folga em volta da pessoa, pra nao cortar cabelo e pe |\n| `min_area` | ignora mancha pequena demais pra ser gente |\n| `max_pessoas` | 0 = todas; outro numero fica com as N maiores |\n\n## Trocar o modelo de melhoria\n\nO enhance vive num subgraph separado (`Ups_OP_01`). Os nodes de recorte e\nrecolagem nao sabem nem se importam com o que ha dentro dele — troque por\nQwen, Z-Image, SDXL, o que preferir.\n"
+        "text": "# Soul Person Enhance\n\n**Enhance each person in a photo on her own — or only the ones you pick.**\n\nUpscale a group portrait as a whole and every face gets a tiny slice of the\nmodel's attention: whoever is in the back stays blurry, whoever is in front\ngets plastic skin.\n\nHere each person is **cropped**, enhanced **alone** at full size, and put back\nat the exact pixel she came from, with the edge melted into the scene.\n\n## How to use\n\n1. **Photo** — load the image.\n2. **Pick people?** — on, only the marked people are treated.\n   Off, it treats **everyone** SAM3 can find.\n3. **canvas** — left click marks who you want.\n   Shift or right click marks who should be left out.\n4. **size** — side of the crop handed to the model. 768 is a good default.\n5. **Run**.\n\nThe `who got picked` panel shows the boxes drawn over the photo: that is how\nyou check the click caught the right person.\n\n## The settings that matter\n\n| setting | what it does |\n|---|---|\n| `size` | side of the crop. Bigger = more real pixels handed to the model |\n| `padding` | room around the person, so hair and feet are not clipped |\n| `min_area` | ignores a blob too small to be a person |\n| `max_people` | 0 = everyone; any other number keeps the N largest |\n\n## Swapping the enhance model\n\nThe enhance lives in its own subgraph (`Ups_OP_01`). The crop and merge nodes\nneither know nor care what is inside it — swap in Qwen, Z-Image, SDXL,\nwhatever you prefer.\n"
       },
       "color": "#222",
       "bgcolor": "#000"
@@ -793,7 +793,7 @@
       2,
       3009,
       2,
-      "SOUSSA_PERSON_TRACKS"
+      "SOUL_PERSON_TRACKS"
     ],
     [
       2270,
@@ -1765,7 +1765,7 @@
                 ]
               }
             ],
-            "title": "alvo do Flux: 0.75 MP (~866 px)",
+            "title": "Flux target: 0.75 MP (~866 px)",
             "properties": {
               "ue_properties": {
                 "widget_ue_connectable": {},
