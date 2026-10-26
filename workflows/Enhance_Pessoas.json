@@ -1,15 +1,15 @@
 {
-  "id": "50u1pers-0nen-hanc-e000-app000000001",
+  "id": "f2a7ee7b-3408-414d-951e-396f80684f3b",
   "revision": 0,
-  "last_node_id": 3017,
-  "last_link_id": 2274,
+  "last_node_id": 3029,
+  "last_link_id": 2290,
   "nodes": [
     {
-      "id": 3006,
+      "id": 3018,
       "type": "ImageCompare",
       "pos": [
-        1884.7879134216616,
-        96.55073361612307
+        1948.8303476816147,
+        203.5437614147687
       ],
       "size": [
         440,
@@ -23,13 +23,13 @@
           "name": "image_a",
           "shape": 7,
           "type": "IMAGE",
-          "link": 2260
+          "link": 2275
         },
         {
           "name": "image_b",
           "shape": 7,
           "type": "IMAGE",
-          "link": 2261
+          "link": 2276
         }
       ],
       "outputs": [],
@@ -48,11 +48,11 @@
       "widgets_values_named": {}
     },
     {
-      "id": 3007,
-      "type": "c8198976-c49c-460e-8fa7-2433d982d28c",
+      "id": 3019,
+      "type": "fefc0159-9f82-45d2-b4c7-8b2f18c94fbc",
       "pos": [
-        1518.7429107889013,
-        97.23649946503014
+        1582.785345048855,
+        204.22952726367578
       ],
       "size": [
         300,
@@ -65,7 +65,7 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 2262
+          "link": 2277
         }
       ],
       "outputs": [
@@ -73,7 +73,7 @@
           "name": "IMAGE",
           "type": "IMAGE",
           "links": [
-            2268
+            2283
           ]
         }
       ],
@@ -84,29 +84,7 @@
           "version": "7.8"
         },
         "cnr_id": "comfy-core",
-        "ver": "0.19.3",
-        "previewExposures": [
-          {
-            "name": "$$canvas-image-preview",
-            "sourceNodeId": "1882",
-            "sourcePreviewName": "$$canvas-image-preview"
-          },
-          {
-            "name": "$$canvas-image-preview_1",
-            "sourceNodeId": "1869",
-            "sourcePreviewName": "$$canvas-image-preview"
-          },
-          {
-            "name": "$$canvas-image-preview_2",
-            "sourceNodeId": "808",
-            "sourcePreviewName": "$$canvas-image-preview"
-          },
-          {
-            "name": "$$canvas-image-preview_3",
-            "sourceNodeId": "1883",
-            "sourcePreviewName": "$$canvas-image-preview"
-          }
-        ]
+        "ver": "0.19.3"
       },
       "widgets_values": [
         0.4
@@ -116,11 +94,11 @@
       }
     },
     {
-      "id": 3008,
+      "id": 3020,
       "type": "SoulPersonTiles",
       "pos": [
-        1044.7879134216614,
-        96.55073361612307
+        1108.830347681615,
+        203.5437614147687
       ],
       "size": [
         420,
@@ -133,24 +111,24 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 2263
+          "link": 2278
         },
         {
           "name": "masks",
           "type": "MASK",
-          "link": 2264
+          "link": 2279
         },
         {
           "name": "points",
           "shape": 7,
           "type": "SAM3_POINTS_PROMPT",
-          "link": 2265
+          "link": 2280
         },
         {
           "name": "points_exclude",
           "shape": 7,
           "type": "SAM3_POINTS_PROMPT",
-          "link": null
+          "link": 2290
         },
         {
           "name": "use_points",
@@ -159,7 +137,7 @@
           "widget": {
             "name": "use_points"
           },
-          "link": 2266
+          "link": 2281
         }
       ],
       "outputs": [
@@ -168,7 +146,7 @@
           "shape": 6,
           "type": "IMAGE",
           "links": [
-            2262
+            2277
           ]
         },
         {
@@ -181,14 +159,14 @@
           "name": "tracks",
           "type": "SOUL_PERSON_TRACKS",
           "links": [
-            2269
+            2284
           ]
         },
         {
           "name": "preview",
           "type": "IMAGE",
           "links": [
-            2274
+            2289
           ]
         },
         {
@@ -204,6 +182,8 @@
           "version": "7.8",
           "input_ue_unconnectable": {}
         },
+        "aux_id": "Soussa4535/SoulPersonEnhance",
+        "ver": "7cee49e3065d750b6f6d9516325b5dd933451a8a",
         "Node name for S&R": "SoulPersonTiles"
       },
       "widgets_values": [
@@ -222,11 +202,11 @@
       }
     },
     {
-      "id": 3009,
+      "id": 3021,
       "type": "SoulPersonTilesMerge",
       "pos": [
-        1526.6539429425009,
-        393.2972133665903
+        1590.6963772024542,
+        500.29024116523567
       ],
       "size": [
         300,
@@ -239,17 +219,17 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 2267
+          "link": 2282
         },
         {
           "name": "crops",
           "type": "IMAGE",
-          "link": 2268
+          "link": 2283
         },
         {
           "name": "tracks",
           "type": "SOUL_PERSON_TRACKS",
-          "link": 2269
+          "link": 2284
         }
       ],
       "outputs": [
@@ -257,8 +237,8 @@
           "name": "images",
           "type": "IMAGE",
           "links": [
-            2260,
-            2273
+            2275,
+            2288
           ]
         },
         {
@@ -274,6 +254,8 @@
           "version": "7.8",
           "input_ue_unconnectable": {}
         },
+        "aux_id": "Soussa4535/SoulPersonEnhance",
+        "ver": "7cee49e3065d750b6f6d9516325b5dd933451a8a",
         "Node name for S&R": "SoulPersonTilesMerge"
       },
       "widgets_values": [
@@ -288,11 +270,11 @@
       }
     },
     {
-      "id": 3010,
+      "id": 3022,
       "type": "LoadSAM3Model",
       "pos": [
-        624.7879134216604,
-        96.55073361612307
+        688.8303476816143,
+        203.5437614147687
       ],
       "size": [
         360,
@@ -308,7 +290,7 @@
           "type": "SAM3_MODEL_CONFIG",
           "slot_index": 0,
           "links": [
-            2270
+            2285
           ]
         }
       ],
@@ -332,11 +314,11 @@
       }
     },
     {
-      "id": 3011,
+      "id": 3023,
       "type": "SAM3Grounding",
       "pos": [
-        624.7879134216604,
-        236.5507336161229
+        688.8303476816143,
+        343.54376141476854
       ],
       "size": [
         360,
@@ -349,12 +331,12 @@
         {
           "name": "sam3_model_config",
           "type": "SAM3_MODEL_CONFIG",
-          "link": 2270
+          "link": 2285
         },
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 2271
+          "link": 2286
         },
         {
           "name": "positive_boxes",
@@ -375,7 +357,7 @@
           "type": "MASK",
           "slot_index": 0,
           "links": [
-            2264
+            2279
           ]
         },
         {
@@ -419,11 +401,11 @@
       }
     },
     {
-      "id": 3012,
+      "id": 3024,
       "type": "SAM3PointCollector",
       "pos": [
-        624.7879134216604,
-        506.5507336161228
+        688.8303476816143,
+        613.5437614147681
       ],
       "size": [
         360,
@@ -436,7 +418,7 @@
         {
           "name": "image",
           "type": "IMAGE",
-          "link": 2272
+          "link": 2287
         }
       ],
       "outputs": [
@@ -444,13 +426,15 @@
           "name": "positive_points",
           "type": "SAM3_POINTS_PROMPT",
           "links": [
-            2265
+            2280
           ]
         },
         {
           "name": "negative_points",
           "type": "SAM3_POINTS_PROMPT",
-          "links": []
+          "links": [
+            2290
+          ]
         }
       ],
       "title": "click who you want",
@@ -478,11 +462,11 @@
       }
     },
     {
-      "id": 3013,
+      "id": 3025,
       "type": "SaveImage",
       "pos": [
-        1884.7879134216616,
-        506.5507336161228
+        1948.8303476816147,
+        613.5437614147681
       ],
       "size": [
         440,
@@ -495,7 +479,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 2273
+          "link": 2288
         }
       ],
       "outputs": [
@@ -524,11 +508,11 @@
       }
     },
     {
-      "id": 3014,
+      "id": 3026,
       "type": "PrimitiveBoolean",
       "pos": [
-        1043.5460707755433,
-        496.4854747850691
+        689.8777967957108,
+        1071.9918645283392
       ],
       "size": [
         260,
@@ -553,7 +537,7 @@
           "name": "BOOLEAN",
           "type": "BOOLEAN",
           "links": [
-            2266
+            2281
           ]
         }
       ],
@@ -576,11 +560,11 @@
       }
     },
     {
-      "id": 3015,
+      "id": 3027,
       "type": "PreviewImage",
       "pos": [
-        1044.7879134216614,
-        592.2948767757434
+        1107.3277180798118,
+        616.6432764752169
       ],
       "size": [
         420,
@@ -593,7 +577,7 @@
         {
           "name": "images",
           "type": "IMAGE",
-          "link": 2274
+          "link": 2289
         }
       ],
       "outputs": [
@@ -617,11 +601,11 @@
       }
     },
     {
-      "id": 3016,
+      "id": 3028,
       "type": "LoadImage",
       "pos": [
-        204.7879134216607,
-        96.55073361612307
+        268.83034768161417,
+        203.5437614147687
       ],
       "size": [
         360,
@@ -647,11 +631,11 @@
           "type": "IMAGE",
           "slot_index": 0,
           "links": [
-            2261,
-            2263,
-            2267,
-            2271,
-            2272
+            2276,
+            2278,
+            2282,
+            2286,
+            2287
           ]
         },
         {
@@ -681,11 +665,11 @@
       }
     },
     {
-      "id": 3017,
+      "id": 3029,
       "type": "MarkdownNote",
       "pos": [
-        -329.8671965722448,
-        56.05418606298584
+        -265.8247623122912,
+        163.04721386163146
       ],
       "size": [
         500,
@@ -716,133 +700,141 @@
   ],
   "links": [
     [
-      2260,
-      3009,
+      2275,
+      3021,
       0,
-      3006,
+      3018,
       0,
       "IMAGE"
     ],
     [
-      2261,
-      3016,
+      2276,
+      3028,
       0,
-      3006,
+      3018,
       1,
       "IMAGE"
     ],
     [
-      2262,
-      3008,
+      2277,
+      3020,
       0,
-      3007,
-      0,
-      "IMAGE"
-    ],
-    [
-      2263,
-      3016,
-      0,
-      3008,
+      3019,
       0,
       "IMAGE"
     ],
     [
-      2264,
-      3011,
+      2278,
+      3028,
       0,
-      3008,
+      3020,
+      0,
+      "IMAGE"
+    ],
+    [
+      2279,
+      3023,
+      0,
+      3020,
       1,
       "MASK"
     ],
     [
-      2265,
-      3012,
+      2280,
+      3024,
       0,
-      3008,
+      3020,
       2,
       "SAM3_POINTS_PROMPT"
     ],
     [
-      2266,
-      3014,
+      2281,
+      3026,
       0,
-      3008,
+      3020,
       4,
       "BOOLEAN"
     ],
     [
-      2267,
-      3016,
+      2282,
+      3028,
       0,
-      3009,
+      3021,
       0,
       "IMAGE"
     ],
     [
-      2268,
-      3007,
+      2283,
+      3019,
       0,
-      3009,
+      3021,
       1,
       "IMAGE"
     ],
     [
-      2269,
-      3008,
+      2284,
+      3020,
       2,
-      3009,
+      3021,
       2,
       "SOUL_PERSON_TRACKS"
     ],
     [
-      2270,
-      3010,
+      2285,
+      3022,
       0,
-      3011,
+      3023,
       0,
       "SAM3_MODEL_CONFIG"
     ],
     [
-      2271,
-      3016,
+      2286,
+      3028,
       0,
-      3011,
+      3023,
       1,
       "IMAGE"
     ],
     [
-      2272,
-      3016,
+      2287,
+      3028,
       0,
-      3012,
-      0,
-      "IMAGE"
-    ],
-    [
-      2273,
-      3009,
-      0,
-      3013,
+      3024,
       0,
       "IMAGE"
     ],
     [
-      2274,
-      3008,
+      2288,
+      3021,
+      0,
+      3025,
+      0,
+      "IMAGE"
+    ],
+    [
+      2289,
+      3020,
       3,
-      3015,
+      3027,
       0,
       "IMAGE"
+    ],
+    [
+      2290,
+      3024,
+      1,
+      3020,
+      3,
+      "SAM3_POINTS_PROMPT"
     ]
   ],
   "groups": [
     {
-      "id": 99,
-      "title": "4 · Melhorar",
+      "id": 105,
+      "title": "4 · Enhance",
       "bounding": [
-        1500.6213936408496,
-        25.6342751564715,
+        1564.6638279008034,
+        132.62730295511716,
         342.7990442812584,
         264.33006267652956
       ],
@@ -850,11 +842,11 @@
       "flags": {}
     },
     {
-      "id": 100,
-      "title": "5 · colar",
+      "id": 106,
+      "title": "5 · Paste",
       "bounding": [
-        1506.6539429425009,
-        299.9240584190213,
+        1570.6963772024542,
+        406.91708621766696,
         343.73205904167776,
         352.0334501559579
       ],
@@ -862,11 +854,11 @@
       "flags": {}
     },
     {
-      "id": 101,
-      "title": "1 · a foto",
+      "id": 107,
+      "title": "1 · Load Image",
       "bounding": [
-        184.78791342166076,
-        26.550733616123107,
+        248.83034768161423,
+        133.54376141476877,
         400,
         420
       ],
@@ -874,51 +866,51 @@
       "flags": {}
     },
     {
-      "id": 102,
-      "title": "2 · achar e escolher",
+      "id": 108,
+      "title": "6 · End",
       "bounding": [
-        604.7879134216604,
-        26.550733616123107,
+        1928.830347681615,
+        133.54376141476877,
+        480,
+        880
+      ],
+      "color": "#88A",
+      "flags": {}
+    },
+    {
+      "id": 109,
+      "title": "2 · Pick or Auto",
+      "bounding": [
+        668.8303476816143,
+        133.54376141476877,
         400,
-        890
+        1027.7316389331183
       ],
       "color": "#a1309b",
       "flags": {}
     },
     {
-      "id": 103,
-      "title": "3 · recortar",
+      "id": 110,
+      "title": "3 · Crop",
       "bounding": [
-        1024.7879134216614,
-        26.550733616123107,
-        462.73205382146034,
-        891.2082508025412
+        1088.830347681615,
+        133.54376141476877,
+        459.72679461785424,
+        814.5741411105819
       ],
       "color": "#4a6",
-      "flags": {}
-    },
-    {
-      "id": 104,
-      "title": "6 · resultado",
-      "bounding": [
-        1864.7879134216616,
-        26.550733616123107,
-        480,
-        880
-      ],
-      "color": "#88A",
       "flags": {}
     }
   ],
   "definitions": {
     "subgraphs": [
       {
-        "id": "c8198976-c49c-460e-8fa7-2433d982d28c",
+        "id": "fefc0159-9f82-45d2-b4c7-8b2f18c94fbc",
         "version": 1,
         "state": {
-          "lastGroupId": 104,
-          "lastNodeId": 3017,
-          "lastLinkId": 2274,
+          "lastGroupId": 110,
+          "lastNodeId": 3029,
+          "lastLinkId": 2289,
           "lastRerouteId": 16
         },
         "revision": 0,
@@ -2708,36 +2700,36 @@
     "linearData": {
       "inputs": [
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3016:image",
+          "f2a7ee7b-3408-414d-951e-396f80684f3b:3028:image",
           "image"
         ],
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3014:value",
+          "f2a7ee7b-3408-414d-951e-396f80684f3b:3026:value",
           "value"
         ],
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3012:canvas",
+          "f2a7ee7b-3408-414d-951e-396f80684f3b:3024:canvas",
           "canvas"
         ],
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3008:size",
+          "f2a7ee7b-3408-414d-951e-396f80684f3b:3020:size",
           "size"
         ],
         [
-          "7a552f6d-8eb4-4ff8-a411-9ea84c4b3698:3007:denoise",
+          "f2a7ee7b-3408-414d-951e-396f80684f3b:3019:denoise",
           "denoise"
         ]
       ],
       "outputs": [
-        "3006"
+        "3018"
       ]
     },
     "linearMode": true,
     "ds": {
-      "scale": 0.6655000000000146,
+      "scale": 0.4545454545454647,
       "offset": [
-        -99.4284307756049,
-        351.24647615832083
+        494.5552635030431,
+        348.4866475551847
       ]
     },
     "anomalous_hashes": {},
