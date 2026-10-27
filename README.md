@@ -17,6 +17,13 @@ And if you don't want everyone — **click the people you want.**
 photo ─► SAM3 finds everyone ─► you click (optional) ─► crop ─► enhance ─► paste back
 ```
 
+![before and after](examples/after.jpg)
+
+At 1:1, the same face before and after. The ear, the hair strands and the
+elastic were a smear; the pavement behind her is untouched.
+
+![face detail, before and after](examples/compare-face2.jpg)
+
 ---
 
 ## The nodes

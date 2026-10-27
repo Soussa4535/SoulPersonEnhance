@@ -1,6 +1,11 @@
 __pycache__/
 *.pyc
+
+# No images by default: nothing from a working folder should ever be published
+# by accident. The demo material under examples/ is the deliberate exception.
 *.png
 *.jpg
 *.jpeg
 *.webp
+!examples/*.jpg
+!examples/*.png
