@@ -17,6 +17,13 @@ And if you don't want everyone — **click the people you want.**
 photo ─► SAM3 finds everyone ─► you click (optional) ─► crop ─► enhance ─► paste back
 ```
 
+![picking two people in the app](examples/demo.gif)
+
+**[▶ Watch the full demo (1:25)](examples/demo.mp4)** — loading a photo, picking two
+people, running, and the same thing on everyone at once.
+
+---
+
 ![before and after](examples/after.jpg)
 
 At 1:1, the same face before and after. The ear, the hair strands and the
